@@ -47,6 +47,18 @@ flowchart TD
 
 ---
 
+## 📚 In-Depth Guides & Technical Documentation
+
+| Guide | Description |
+|---|---|
+| [**System Architecture & Design Philosophy**](doc/architecture.md) | Outbox pattern mechanics, state machine FSM, FIFO causal halting, async mutex concurrency. |
+| [**Remote Sync Adapters Guide**](doc/adapters.md) | Deep dive into `RestSyncAdapter`, `SupabaseSyncAdapter`, `FirestoreSyncAdapter`, and custom adapters (GraphQL/gRPC). |
+| [**Persistent Storage Implementations**](doc/storage.md) | Production-ready, copy-pasteable SQLite implementations for **Drift** and **Sqflite** with indexing. |
+| [**Conflict Resolution & Consistency**](doc/conflicts.md) | Clock skew mitigation, Last-Write-Wins, server vs. client authority, and 3-way custom JSON payload merges. |
+| [**Production Readiness Checklist**](doc/production_checklist.md) | Idempotency keys, exponential backoff tuning, background sync with `workmanager`, telemetry & alerts. |
+
+---
+
 ## 📦 Installation
 
 Add `sync_orbit` to your `pubspec.yaml`:
