@@ -4,6 +4,7 @@
 /// ## Key Features
 /// - **Pluggable Persistence**: Implement [SyncStorage] for SQLite (`sqflite`, `drift`), Hive, or use built-in [InMemorySyncStorage].
 /// - **Outbox Queue**: Reliable FIFO sequential dispatch of [SyncMutation] operations.
+/// - **Remote Adapters**: Built-in [RestSyncAdapter], [SupabaseSyncAdapter], and [FirestoreSyncAdapter].
 /// - **Conflict Resolution Strategies**: Server Wins, Client Wins, and Last-Write-Wins (LWW) via [ConflictResolver].
 /// - **Exponential Backoff**: Configurable backoff multipliers, max retries, and jitter via [RetryPolicy].
 /// - **Network Reactivity**: Injected [SyncConnectivity] or `Stream<bool>` automatically triggers sync on reconnect.
@@ -14,7 +15,10 @@ export 'src/models/sync_action.dart';
 export 'src/models/sync_mutation.dart';
 export 'src/models/sync_status.dart';
 
-// Adapter
+// Adapters
+export 'src/adapter/firestore_sync_adapter.dart';
+export 'src/adapter/rest_sync_adapter.dart';
+export 'src/adapter/supabase_sync_adapter.dart';
 export 'src/adapter/sync_adapter.dart';
 export 'src/adapter/sync_adapter_result.dart';
 

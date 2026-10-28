@@ -64,69 +64,65 @@ flutter pub get
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Built-in Sync Adapters
 
-### 1. Implement a `SyncAdapter`
+`sync_orbit` comes with battle-tested adapters for popular backends:
 
-Create an adapter that sends mutations to your backend REST API, GraphQL, or database:
+### 1. `RestSyncAdapter` (Standard REST APIs)
+
+Dispatches mutations via HTTP `POST`, `PUT`/`PATCH`, and `DELETE`.
 
 ```dart
 import 'package:sync_orbit/sync_orbit.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
-class ApiSyncAdapter implements SyncAdapter {
-  final String baseUrl;
-  final http.Client client;
-
-  ApiSyncAdapter({required this.baseUrl, required this.client});
-
-  @override
-  Future<SyncAdapterResult> send(SyncMutation mutation) async {
-    try {
-      final url = Uri.parse('$baseUrl/${mutation.endpoint}');
-      late http.Response response;
-
-      switch (mutation.action) {
-        case SyncAction.create:
-          response = await client.post(url, body: jsonEncode(mutation.payload));
-        case SyncAction.update:
-          response = await client.put(url, body: jsonEncode(mutation.payload));
-        case SyncAction.delete:
-          response = await client.delete(url, body: jsonEncode(mutation.payload));
-      }
-
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        return SyncAdapterSuccess(
-          statusCode: response.statusCode,
-          responseData: response.body.isNotEmpty ? jsonDecode(response.body) : null,
-        );
-      } else if (response.statusCode == 409) {
-        // Conflict detected
-        final remote = jsonDecode(response.body) as Map<String, dynamic>;
-        return SyncAdapterConflict(
-          serverPayload: remote,
-          statusCode: 409,
-          reason: 'Version conflict',
-        );
-      } else {
-        return SyncAdapterFailure(
-          error: 'HTTP ${response.statusCode}: ${response.body}',
-          statusCode: response.statusCode,
-          isRecoverable: response.statusCode >= 500, // 5xx are retryable
-        );
-      }
-    } catch (e) {
-      return SyncAdapterFailure(
-        error: e.toString(),
-        isRecoverable: true, // Network disconnects are retryable
-      );
-    }
-  }
-}
+final restAdapter = RestSyncAdapter(
+  baseUrl: 'https://api.example.com/v1',
+  headersProvider: () async => {
+    'Authorization': 'Bearer ${await authService.getAccessToken()}',
+  },
+  appendIdOnUpdateAndDelete: true, // Automatically appends '/{id}' for updates & deletes
+  usePatchForUpdate: false,        // Use PUT (default) or set true for PATCH
+  timeout: const Duration(seconds: 30),
+);
 ```
 
-### 2. Configure and Initialize `SyncEngine`
+### 2. `SupabaseSyncAdapter` (Supabase PostgREST)
+
+Integrates directly with `supabase_flutter` to execute table inserts, updates, and deletes with conflict detection.
+
+```dart
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:sync_orbit/sync_orbit.dart';
+
+final supabaseClient = Supabase.instance.client;
+
+final supabaseAdapter = SupabaseSyncAdapter(
+  client: supabaseClient,
+  primaryKey: 'id',                 // Primary key column name (defaults to 'id')
+  fetchConflictRecord: true,        // Automatically queries conflicting remote row on 409 / 23505
+);
+```
+
+### 3. `FirestoreSyncAdapter` (Cloud Firestore)
+
+Applies mutations directly to Firestore document paths or collections.
+
+```dart
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sync_orbit/sync_orbit.dart';
+
+final firestore = FirebaseFirestore.instance;
+
+final firestoreAdapter = FirestoreSyncAdapter(
+  firestore: firestore,
+  useMergeSetForUpdate: true,               // Uses SetOptions(merge: true) for safe upserts
+  detectExistingOnCreateAsConflict: true,   // Detects if document already exists on create
+);
+```
+
+---
+
+## 💡 Quick Start
 
 ```dart
 import 'package:connectivity_plus/connectivity_plus.dart';
