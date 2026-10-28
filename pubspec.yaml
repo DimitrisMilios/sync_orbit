@@ -1,0 +1,22 @@
+name: sync_orbit
+description: A production-ready offline-first sync engine and outbox mutation queue for Flutter and Dart.
+version: 0.1.0
+repository: https://github.com/DimitrisMilios/sync_orbit
+issue_tracker: https://github.com/DimitrisMilios/sync_orbit/issues
+homepage: https://github.com/DimitrisMilios/sync_orbit
+
+environment:
+  sdk: ^3.11.5
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  meta: ^1.11.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
