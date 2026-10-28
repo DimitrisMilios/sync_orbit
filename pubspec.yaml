@@ -5,9 +5,16 @@ repository: https://github.com/DimitrisMilios/sync_orbit
 issue_tracker: https://github.com/DimitrisMilios/sync_orbit/issues
 homepage: https://github.com/DimitrisMilios/sync_orbit
 
+topics:
+  - offline-first
+  - sync
+  - database
+  - supabase
+  - firestore
+
 environment:
-  sdk: ^3.11.5
-  flutter: ">=1.17.0"
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.19.0'
 
 dependencies:
   cloud_firestore: ^7.1.0
